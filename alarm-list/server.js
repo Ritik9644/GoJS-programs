@@ -1,13 +1,15 @@
 const http = require("http");
 const fs = require("fs");
 
-const rows =[
+const rows = [
     {
         ALM_DATE: "2026-08-20 08:00:11:123",
         ALM_TEXT: "FAULT",
         ALM_VALUE: 1,
-        ALM_REASON_CODE: "",
-        ATTRIBUTE_INF_2: "STATION-01"
+        ALM_REASON_CODE: "MOTOR_OVERLOAD",
+        ATTRIBUTE_INF_2: "STATION-01",
+        ALM_EVENT_CLASS_RREF: "PROCESS",
+        ALM_COMMENT: "Test alarm"
     }
 ];
 

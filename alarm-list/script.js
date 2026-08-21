@@ -1,22 +1,49 @@
 fetch("/alarm_list.json")
-    .then(response => response.json())
+    .then(r => r.json())
     .then(config =>{
 
-        const list = config.nodeDataArray[0];
+        const columns = config.nodeDataArray[0].properties.Columns;
 
-        const columnDefs = list.properties.Columns.map(c =>({
-            field: c.columnName,
-            headerName: c.displayName
-        }));
+        const columnDefs = columns.map(c =>{
+
+            const column ={
+                field: c.columnName,
+                headerName: c.displayName
+            };
+
+            if (c.eltType === "DATETIME"){
+                column.filter = "agDateColumnFilter";
+            }
+            else {
+                column.filter = "agTextColumnFilter";
+
+                if (c.filter?.enabled) {
+                    column.filterParams = {
+                        numAlwaysVisibleConditions: 2,
+                        maxNumConditions: Math.max(
+                            2,
+                            c.filter.conditions.length
+                        ),
+                        defaultJoinOperator: c.filter.conditionLogic
+                    };
+                }
+            }
+            return column;
+        });
+
+
 
         fetch("/api/alarms")
-            .then(response => response.json())
-            .then(rows =>{
+            .then(r => r.json())
+            .then(rows => {
 
-                agGrid.createGrid(document.getElementById("grid"),{
-                    columnDefs,
-                    rowData:rows
-                });
+                agGrid.createGrid(
+                    document.getElementById("grid"),
+                    {
+                        columnDefs: columnDefs,
+                        rowData: rows
+                    }
+                );
 
             });
     });
